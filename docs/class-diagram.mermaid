@@ -1,0 +1,63 @@
+classDiagram
+    class network_type_t {
+        <<enumeration>>
+        NET_CLEARNET
+        NET_TOR
+        NET_I2P
+        NET_SKHORON
+    }
+
+    class scheme_type_t {
+        <<enumeration>>
+        SCHEME_UNKNOWN
+        SCHEME_HTTP
+        SCHEME_HTTPS
+    }
+
+    class target_t {
+        +char host[256]
+        +int port
+        +int is_ipv6_literal
+        +scheme_type_t scheme
+        +network_type_t net
+    }
+
+    class Router {
+        +router_detect_network(host) network_type_t
+        +router_parse_url(url, target_t*) router_error_t
+        +router_default_port(scheme) int
+        +router_network_name(net) char*
+    }
+
+    class Stream {
+        +stream_open(target_t*, dry_run) stream_result_t
+        +stream_result_free(stream_result_t*)
+    }
+
+    class Socks5Client {
+        +socks5_connect(proxy_host, proxy_port, dst_host, dst_port) int
+    }
+
+    class stream_result_t {
+        +int ok
+        +stream_transport_t transport
+        +int fd
+        +uint8_t* data
+        +size_t data_len
+        +char error[512]
+    }
+
+    class stream_transport_t {
+        <<enumeration>>
+        STREAM_TRANSPORT_NONE
+        STREAM_TRANSPORT_TCP_FD
+        STREAM_TRANSPORT_QUIC
+    }
+
+    Router --> target_t : создаёт
+    Stream --> target_t : принимает
+    Stream --> stream_result_t : возвращает
+    stream_result_t --> stream_transport_t
+    Stream --> Socks5Client : NET_TOR / NET_I2P
+    target_t --> network_type_t
+    target_t --> scheme_type_t
