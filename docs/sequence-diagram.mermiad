@@ -1,0 +1,26 @@
+sequenceDiagram
+    participant User as Пользователь
+    participant Main as main.c
+    participant Router as router.c
+    participant Stream as stream.c
+    participant Socks5 as socks5.c
+    participant Proxy as tor / i2pd (localhost)
+
+    User->>Main: stp https://site.onion
+    Main->>Router: router_parse_url(url)
+    Router->>Router: router_detect_network(host)
+    Router-->>Main: target_t{host, port, net, scheme}
+
+    Main->>Stream: stream_open(target, dry_run)
+
+    alt net == TOR или I2P
+        Stream->>Socks5: socks5_connect(proxy, dst)
+        Socks5->>Proxy: TCP connect + SOCKS5 handshake (read_full/write_full, таймауты)
+        Proxy-->>Socks5: CONNECT OK (полный разбор ответа по RFC 1928)
+        Socks5-->>Stream: fd готового сокета
+    else net == CLEARNET или SKHORON
+        Stream-->>Stream: не реализовано - честная ошибка, не заглушка "как будто работает"
+    end
+
+    Stream-->>Main: stream_result_t{ok, transport, fd/data, error}
+    Main-->>User: печатает результат маршрутизации
