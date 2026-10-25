@@ -1,27 +1,22 @@
-# STP — Skhoron Transport Protocol
+STP — Skhoron Transport Protocol
 
-Транспортный движок: определяет по URL, через какую сеть слать запрос
-(clearnet / Tor / I2P), и реально подключается через неё.
+A transport engine that determines which network to send a request through based on the URL
+(clearnet / Tor / I2P), and actually connects through it.
 
-## Статус
+Status
 
-| Сеть      | Статус                                                          |
-|-----------|-------------------------------------------------------------------|
-| Tor       | Работает. SOCKS5 к локальному `tor` (127.0.0.1:9050)              |
-| I2P       | Работает. SOCKS5 к локальному `i2pd` (127.0.0.1:4447)              |
-| Clearnet  | НЕ реализовано. `stream_open()` возвращает явную ошибку           |
-| Skhoron   | НЕ реализовано (и сама Skhoron-сеть узлов не строится в этом проекте) |
+Network| Status
+Tor| Works. SOCKS5 to local "tor" (127.0.0.1:9050)
+I2P| Works. SOCKS5 to local "i2pd" (127.0.0.1:4447)
+Clearnet| NOT implemented. "stream_open()" returns an explicit error
+Skhoron| NOT implemented (and the Skhoron node network itself is not being built in this project)
 
-## Сборка
+Build
 
-```bash
-make        # собрать ./stp
-make test   # прогнать 34 юнит-теста router.c
-```
+make        # build ./stp
+make test   # run 34 unit tests for router.c
 
-## Использование
+Usage
 
-```bash
-./stp https://example.com                    # dry-run по умолчанию
-./stp --live http://xyz.onion                # реально подключиться через Tor
-```
+./stp https://example.com                    # dry-run by default
+./stp --live http://xyz.onion                # actually connect through Tor
