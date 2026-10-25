@@ -1,4 +1,4 @@
-STP — Skhoron Transport Protocol
+# STP — Skhoron Transport Protocol
 
 A transport engine that determines which network to send a request through based on the URL
 (clearnet / Tor / I2P), and actually connects through it.
